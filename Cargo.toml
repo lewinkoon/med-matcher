@@ -1,0 +1,7 @@
+[package]
+name = "med-matcher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+polars = { version = "0.37.0", features = ["lazy"] }
