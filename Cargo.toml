@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 polars = { version = "0.37.0", features = ["lazy"] }
+smartstring = "1.0.1"

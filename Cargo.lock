@@ -479,6 +479,7 @@ name = "med-matcher"
 version = "0.1.0"
 dependencies = [
  "polars",
+ "smartstring",
 ]
 
 [[package]]
