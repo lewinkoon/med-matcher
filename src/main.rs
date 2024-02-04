@@ -1,4 +1,7 @@
-use polars::prelude::*;
+use polars::{
+    lazy::dsl::{col, lit, when},
+    prelude::*,
+};
 use std::fs;
 
 fn main() {
@@ -43,7 +46,18 @@ fn main() {
         )
         .unwrap();
 
-    println!("{}", &board);
+    let test = board
+        .lazy()
+        .with_column(
+            when(col("PREFERENCIA_DIURNO").eq(lit("SI")))
+                .then(lit(true))
+                .otherwise(lit(false))
+                .alias("PRIORIDAD"),
+        )
+        .collect()
+        .unwrap();
+
+    println!("{}", &test);
 }
 
 fn folder_exists(path: &str) -> bool {
