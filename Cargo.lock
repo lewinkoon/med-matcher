@@ -475,7 +475,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "med-matcher"
+name = "medmatch"
 version = "0.1.0"
 dependencies = [
  "polars",
