@@ -1,15 +1,20 @@
-use polars::{lazy::dsl::col, prelude::*};
+use polars::prelude::*;
 use smartstring::alias::String;
 use std::fs;
 
 fn main() {
-    let applicants = LazyCsvReader::new("files/applicants.csv")
-        .finish()
-        .unwrap()
-        .collect()
-        .unwrap();
+    let applicants = LazyCsvReader::new("files/applicants.csv").finish().unwrap();
 
-    let _positions = LazyCsvReader::new("files/positions.csv").finish().unwrap();
+    let positions = LazyCsvReader::new("files/positions.csv").finish().unwrap();
+
+    let _profiles = positions
+        .clone()
+        .select([col("PERFIL")])
+        .drop_nulls(None)
+        .unique(None, UniqueKeepStrategy::Any)
+        .collect();
+
+    println!("{:?}", _profiles);
 
     // check if the output folder exists
     let output_path = "output";
@@ -23,7 +28,10 @@ fn main() {
     }
 
     // get priority columns as a list
-    let _priorities: Vec<String> = applicants
+    let priorities: Vec<String> = applicants
+        .clone()
+        .collect()
+        .unwrap()
         .get_column_names()
         .iter()
         .filter(|&x| x.contains("ORDEN"))
@@ -31,41 +39,49 @@ fn main() {
         .map(|s| String::from(s))
         .collect();
 
-    // disaggregate and merges tables
+    // disaggregate and merge into single table
     let mut board = applicants
         .clone()
-        .lazy()
         .melt(MeltArgs {
             id_vars: vec![String::from("SOLICITANTE")],
-            value_vars: _priorities,
+            value_vars: priorities,
             variable_name: Some(String::from("PRIORIDAD")),
-            value_name: Some(String::from("POSICION_SOLICITADA")),
+            value_name: Some(String::from("DESTINO")),
             streamable: false,
         })
         .join(
-            applicants.clone().lazy(),
+            applicants.clone(),
             [col("SOLICITANTE")],
             [col("SOLICITANTE")],
             JoinArgs::new(JoinType::Inner),
         )
+        .join(
+            positions.clone(),
+            [col("DESTINO")],
+            [col("DESTINO")],
+            JoinArgs::new(JoinType::Inner),
+        )
+        .with_column(
+            when(col("PREFERENCIA_DIURNO").eq(lit("SI")))
+                .then(lit(true))
+                .otherwise(lit(false))
+                .alias("PREFERENCIA_DIURNO"),
+        ) // mark entries without daytime work shift
+        .filter(col("VALIDO").eq(lit("SI")))
+        .with_column(
+            when(col("PERFIL").eq(lit("SI")))
+                .then(lit(true))
+                .otherwise(lit(false))
+                .alias("PREFERENCIA_DIURNO"),
+        )
         .collect()
         .unwrap();
 
-    // mark entries without daytime work shift
-    // let shift = board
-    //     .lazy()
-    //     .with_column(
-    //         when(col("PREFERENCIA_DIURNO").eq(lit("SI")))
-    //             .then(lit(true))
-    //             .otherwise(lit(false))
-    //             .alias("PRIORIDAD"),
-    //     )
-    //     .collect()
-    //     .unwrap();
 
-    let file = std::fs::File::create("output/data.csv").unwrap();
 
-    CsvWriter::new(file).finish(&mut board).unwrap();
+    let output = std::fs::File::create("output/data.csv").unwrap();
+
+    CsvWriter::new(output).finish(&mut board).unwrap();
 }
 
 fn folder_exists(path: &str) -> bool {
