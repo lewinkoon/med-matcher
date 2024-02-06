@@ -18,9 +18,9 @@ fn main() {
 
     // check if the output folder exists
     let output_path = "output";
-    if !folder_exists(&output_path) {
+    if !folder_exists(output_path) {
         // if it does not exist then create it
-        if let Err(err) = create_folder(&output_path) {
+        if let Err(err) = create_folder(output_path) {
             eprintln!("Error creating output folder: {}", err);
         } else {
             println!("Output folder created succesfully!");
@@ -36,7 +36,7 @@ fn main() {
         .iter()
         .filter(|&x| x.contains("ORDEN"))
         .cloned()
-        .map(|s| String::from(s))
+        .map(String::from)
         .collect();
 
     // disaggregate and merge into single table
