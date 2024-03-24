@@ -1,4 +1,7 @@
-use polars::prelude::*;
+use polars::{
+    lazy::dsl::{all, col},
+    prelude::*,
+};
 use smartstring::alias::String;
 use std::fs;
 
@@ -7,14 +10,14 @@ fn main() {
 
     let positions = LazyCsvReader::new("files/positions.csv").finish().unwrap();
 
-    let _profiles = positions
+    let profiles = positions
         .clone()
         .select([col("PERFIL")])
         .drop_nulls(None)
         .unique(None, UniqueKeepStrategy::Any)
         .collect();
 
-    println!("{:?}", _profiles);
+    println!("{:?}", profiles);
 
     // check if the output folder exists
     let output_path = "output";
@@ -27,7 +30,7 @@ fn main() {
         }
     }
 
-    // get priority columns as a list
+    // get priority columns as a listT
     let priorities: Vec<String> = applicants
         .clone()
         .collect()
@@ -77,7 +80,9 @@ fn main() {
         .collect()
         .unwrap();
 
-
+    let test = board
+        .apply("PUNTOS", |x| board.column("ANTIGUEDAD_TOTAL"))
+        .unwrap();
 
     let output = std::fs::File::create("output/data.csv").unwrap();
 
