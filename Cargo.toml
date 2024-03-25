@@ -4,5 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-polars = { version = "0.37.0", features = ["lazy", "concat_str", "strings", "regex"] }
-smartstring = "1.0.1"
+csv = "1.3"
