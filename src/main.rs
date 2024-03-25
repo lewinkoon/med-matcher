@@ -1,37 +1,23 @@
-use polars::{
-    lazy::dsl::{all, col},
-    prelude::*,
-};
+mod helpers;
+
+use polars::prelude::*;
 use smartstring::alias::String;
-use std::fs;
 
 fn main() {
+    // read input data files
     let applicants = LazyCsvReader::new("files/applicants.csv").finish().unwrap();
-
     let positions = LazyCsvReader::new("files/positions.csv").finish().unwrap();
 
-    let profiles = positions
+    // extract list of unique profiles
+    let _profiles = positions
         .clone()
         .select([col("PERFIL")])
         .drop_nulls(None)
-        .unique(None, UniqueKeepStrategy::Any)
+        .unique_stable(None, UniqueKeepStrategy::Any)
         .collect();
 
-    println!("{:?}", profiles);
-
-    // check if the output folder exists
-    let output_path = "output";
-    if !folder_exists(output_path) {
-        // if it does not exist then create it
-        if let Err(err) = create_folder(output_path) {
-            eprintln!("Error creating output folder: {}", err);
-        } else {
-            println!("Output folder created succesfully!");
-        }
-    }
-
-    // get priority columns as a listT
-    let priorities: Vec<String> = applicants
+    // extract list of priority columns
+    let preferences: Vec<String> = applicants
         .clone()
         .collect()
         .unwrap()
@@ -47,7 +33,7 @@ fn main() {
         .clone()
         .melt(MeltArgs {
             id_vars: vec![String::from("SOLICITANTE")],
-            value_vars: priorities,
+            value_vars: preferences,
             variable_name: Some(String::from("PRIORIDAD")),
             value_name: Some(String::from("DESTINO")),
             streamable: false,
@@ -64,37 +50,37 @@ fn main() {
             [col("DESTINO")],
             JoinArgs::new(JoinType::Inner),
         )
-        .with_column(
-            when(col("PREFERENCIA_DIURNO").eq(lit("SI")))
-                .then(lit(true))
-                .otherwise(lit(false))
-                .alias("PREFERENCIA_DIURNO"),
-        ) // mark entries without daytime work shift
-        .filter(col("VALIDO").eq(lit("SI")))
-        .with_column(
-            when(col("PERFIL").eq(lit("SI")))
-                .then(lit(true))
-                .otherwise(lit(false))
-                .alias("PREFERENCIA_DIURNO"),
+        .sort("DESTINO", Default::default());
+
+    // remove illegal entries
+    board = board.filter(col("VALIDO").eq(lit("SI")));
+
+    // mark entries with daylight shift privilege
+    board = board.with_column(
+        when(
+            col("PREFERENCIA_DIURNO")
+                .eq(lit("SI"))
+                .and(col("TURNO").eq(lit("DIURNO"))),
         )
-        .collect()
+        .then(lit(true))
+        .otherwise(lit(false))
+        .alias("PRIVILEGIO"),
+    );
+
+    // create score column with profile experience and formation
+    board = board.clone().with_column(
+        col("ANTIGUEDAD_TOTAL")
+            .cast(DataType::Float32)
+            .map(
+                |x| Ok(Some(x * 0.05)),
+                GetOutput::from_type(DataType::Float32),
+            )
+            .alias("PUNTOS"),
+    );
+
+    // export dataframe to csv
+    let output = std::fs::File::create("output/board.csv").unwrap();
+    CsvWriter::new(output)
+        .finish(&mut board.collect().unwrap())
         .unwrap();
-
-    let test = board
-        .apply("PUNTOS", |x| board.column("ANTIGUEDAD_TOTAL"))
-        .unwrap();
-
-    let output = std::fs::File::create("output/data.csv").unwrap();
-
-    CsvWriter::new(output).finish(&mut board).unwrap();
-}
-
-fn folder_exists(path: &str) -> bool {
-    fs::metadata(path)
-        .map(|metadata| metadata.is_dir())
-        .unwrap_or(false)
-}
-
-fn create_folder(path: &str) -> Result<(), std::io::Error> {
-    fs::create_dir(path)
 }
