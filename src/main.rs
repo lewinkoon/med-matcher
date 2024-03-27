@@ -8,7 +8,7 @@ fn main() {
 
     // read applicants requests
     let applicants_path: &str = "files/applicants.csv";
-    let applicants: Vec<Request> = parse_file(applicants_path).unwrap_or_else(|err| {
+    let applicants: Vec<Applicant> = parse_file(applicants_path).unwrap_or_else(|err| {
         println!("{err}");
         process::exit(1);
     });

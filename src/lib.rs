@@ -4,10 +4,8 @@ use std::error::Error;
 
 #[allow(dead_code)]
 #[derive(Deserialize)]
-pub struct Request {
+pub struct Applicant {
     applicant: String,
-    vacancy: String,
-    preference: u8,
     name: String,
     surname1: String,
     surname2: String,
