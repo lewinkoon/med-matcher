@@ -2,7 +2,6 @@ use log::{error, info};
 use serde::Deserialize;
 use std::error::Error;
 
-#[allow(dead_code)]
 #[derive(Debug, Deserialize, PartialEq, PartialOrd, Eq, Ord)]
 struct Request {
     applicant: String,
