@@ -1,4 +1,4 @@
-﻿DESTINO,NUM_PUESTOS,TURNO,UNIDAD_SERVICIO_AREA,CARACTERISTICAS,ESPECIALIDAD,PERFIL
-P01,1,DIURNO,ASUNTOS ECONOMICOS,,,URG
-P02,3,"ROTATORIO ",SADC LISTA DE ESPERA QUIRGUGICA,,,
-P03,3,NOCTURNO,SADC ADMISION HOSPITALIZACION,,,
+﻿vacancy,quantity,shift,department,characteristics,specialty,profile
+v01,1,daylight,economics,,,emergencies
+v02,3,rotatory ",surgery,,,
+v03,3,night,admission,,,
