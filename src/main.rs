@@ -14,7 +14,7 @@ fn main() {
     });
     info!("Loaded {} applicant requests.", applicants.len());
 
-    // read vacant positions
+    // // read vacant positions
     let vacancies_path: &str = "files/vacancies.csv";
     let vacancies: Vec<Vacancy> = parse_file(vacancies_path).unwrap_or_else(|err| {
         println!("{err}");
