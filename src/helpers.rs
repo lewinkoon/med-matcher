@@ -1,19 +1,6 @@
-use serde::de::DeserializeOwned;
-use serde::{Deserialize, Serialize};
+use crate::input;
+use serde::Serialize;
 use std::error::Error;
-
-pub fn parse_file<T: DeserializeOwned>(file_path: &str) -> Result<Vec<T>, Box<dyn Error>> {
-    // read csv file
-    let mut rdr = csv::Reader::from_path(file_path)?;
-
-    // push each csv row into a vector of structs
-    let mut records = Vec::new();
-    for result in rdr.deserialize() {
-        let record = result?;
-        records.push(record);
-    }
-    Ok(records)
-}
 
 pub fn export(file_path: &str, data: Vec<Request>) -> Result<(), Box<dyn Error>> {
     let mut wtr = csv::WriterBuilder::new()
@@ -27,35 +14,19 @@ pub fn export(file_path: &str, data: Vec<Request>) -> Result<(), Box<dyn Error>>
     Ok(())
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Applicant {
-    id: String,
-    name: String,
-    surname1: String,
-    surname2: String,
-    birthday: String,
-    specialty: String,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Vacancy {
-    id: String,
-    quantity: String,
-    shift: String,
-    department: String,
-    specialty: String,
-    profile: String,
-}
-
 #[derive(Debug, Serialize)]
 pub struct Request<'a> {
-    applicant: &'a Applicant,
-    vacancy: &'a Vacancy,
+    applicant: &'a input::Applicant,
+    vacancy: &'a input::Vacancy,
     preference: String,
 }
 
 impl<'a> Request<'a> {
-    pub fn build(row: csv::StringRecord, app: &'a [Applicant], vac: &'a [Vacancy]) -> Self {
+    pub fn build(
+        row: csv::StringRecord,
+        app: &'a [input::Applicant],
+        vac: &'a [input::Vacancy],
+    ) -> Self {
         let app_idx = row.get(0).unwrap()[1..]
             .parse::<usize>()
             .unwrap_or_default();
