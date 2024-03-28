@@ -2,9 +2,12 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::error::Error;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Applicant {
-    id: String,
+    pub id: String,
+    pub preference01: String,
+    pub preference02: String,
+    pub preference03: String,
     name: String,
     surname1: String,
     surname2: String,
@@ -12,7 +15,7 @@ pub struct Applicant {
     specialty: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct Vacancy {
     id: String,
     quantity: String,
