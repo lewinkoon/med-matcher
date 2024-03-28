@@ -1,4 +1,4 @@
-﻿applicant,name,surname1,surname2,birthday,admission_date,specialty,preference_request,forced_movility,excluded,reason,total_worked_time,permanent_worked_time,emergencies_experience,emergencies_training
+﻿id,name,surname1,surname2,birthday,admission_date,specialty,preference_request,forced_movility,excluded,reason,total_worked_time,permanent_worked_time,emergencies_experience,emergencies_training
 a01,María Carmen,Alonso,Del Bosque,13/07/1966,21/12/2002,,true,false,false,,250,8,0,0
 a01,María Carmen,Alonso,Del Bosque,13/07/1966,21/12/2002,,true,false,false,,250,8,0,0
 a01,María Carmen,Alonso,Del Bosque,13/07/1966,21/12/2002,,true,false,false,,250,8,0,0

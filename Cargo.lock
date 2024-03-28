@@ -134,6 +134,7 @@ dependencies = [
  "csv",
  "env_logger",
  "log",
+ "serde",
 ]
 
 [[package]]

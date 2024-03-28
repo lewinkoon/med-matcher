@@ -1,4 +1,4 @@
-﻿vacancy,quantity,shift,department,specialty,profile
+﻿id,quantity,shift,department,specialty,profile
 v01,1,daylight,economics,,emergencies
 v02,3,rotatory ",surgery,,
 v03,3,night,admission,,
