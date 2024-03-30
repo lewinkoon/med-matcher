@@ -1,6 +1,7 @@
 use crate::board::Request;
 use itertools::Itertools;
 
+#[allow(dead_code)]
 pub struct Proposor {
     id: String,
     list: Vec<String>,

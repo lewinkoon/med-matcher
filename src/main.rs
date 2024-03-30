@@ -1,4 +1,3 @@
-// mod helpers;
 mod algorithm;
 mod board;
 mod helpers;
@@ -54,6 +53,7 @@ fn main() {
         }
     };
 
+    // build proposors list
     let proposors = algorithm::Proposor::build(requests);
     info!("Created list of {} proposors", proposors.len());
 }
