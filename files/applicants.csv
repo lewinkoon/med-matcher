@@ -1,4 +1,4 @@
-﻿id,preference01,preference02,preference03,name,surname1,surname2,birthday,admission_date,specialty,preference_request,forced_movility,excluded,reason,total_worked_time,permanent_worked_time,emergencies_experience,emergencies_training
+﻿id,pref01,pref02,pref03,name,surname1,surname2,birthday,admission_date,specialty,preference_request,forced_movility,excluded,reason,total_worked_time,permanent_worked_time,emergencies_experience,emergencies_training
 a01,v01,v02,v03,María Carmen,Alonso,Del Bosque,13/07/1966,21/12/2002,,true,false,false,,250,8,0,0
 a02,v03,v01,v02,Yolanda,Andrés,Olmedo,24/10/1962,11/06/2021,,false,false,false,,28,28,0,0
 a03,v02,v03,v01,Eva María,Cabeza,Bayón,22/01/1976,12/07/2018,,false,false,false,,102,63,0,0

@@ -1,4 +1,5 @@
 // mod helpers;
+mod algorithm;
 mod board;
 mod helpers;
 mod input;
@@ -17,7 +18,7 @@ fn main() {
     let board_path: &str = "results/board.csv";
 
     // read applicants requests file
-    let applicants: Vec<input::Applicant> = match input::parse_file(applicants_path) {
+    let applicants: Vec<input::Applicant> = match helpers::parse_file(applicants_path) {
         Ok(res) => {
             info!("Loaded {} applicant requests.", res.len());
             res
@@ -29,7 +30,7 @@ fn main() {
     };
 
     // read vacant positions file
-    let _vacancies: Vec<input::Vacancy> = match input::parse_file(vacancies_path) {
+    let _vacancies: Vec<input::Vacancy> = match helpers::parse_file(vacancies_path) {
         Ok(res) => {
             info!("Loaded {} vacancy positions.", res.len());
             res
@@ -45,11 +46,14 @@ fn main() {
     info!("Loaded {} board requests.", requests.len());
 
     // write requests board to file
-    match helpers::export(board_path, requests) {
+    match helpers::export(board_path, &requests) {
         Ok(_) => info!("Requests board successfully written."),
         Err(e) => {
             error!("{e}");
             process::exit(1)
         }
     };
+
+    let proposors = algorithm::Proposor::build(requests);
+    info!("Created list of {} proposors", proposors.len());
 }
